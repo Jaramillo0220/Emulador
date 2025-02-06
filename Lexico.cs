@@ -288,15 +288,15 @@ namespace Semantica_1
             }
             if (estado == E)
             {
-                if (Clasificacion = Tipos.Cadena)
+                if (Clasificacion == Tipos.Cadena)
                 {
                     throw new Error("léxico, se esperaba un cierre de cadena", log, linea, columna);
                 }
-                else if (Clasificacion = Tipos.Caracter)
+                else if (Clasificacion == Tipos.Caracter)
                 {
                     throw new Error("léxico, se esperaba un cierre de comilla simple", log, linea, columna);
                 }
-                else if (Clasificacion = Tipos.Numero)
+                else if (Clasificacion == Tipos.Numero)
                 {
                     throw new Error("léxico, se esperaba un dígito", log, linea, columna);
                 }
@@ -305,24 +305,24 @@ namespace Semantica_1
                     throw new Error("léxico, se espera fin de comentario", log, linea, columna);
                 }
             }
-            Contenido(buffer);
+            Contenido = buffer;
             if (!finArchivo())
             {
-                if (Clasificacion = Tipos.Identificador)
+                if (Clasificacion == Tipos.Identificador)
                 {
                     switch (Contenido)
                     {
                         case "char":
                         case "int":
                         case "float":
-                            Clasificacion(Tipos.TipoDato);
+                            Clasificacion = Tipos.TipoDato;
                             break;
                         case "if":
                         case "else":
                         case "do":
                         case "while":
                         case "for":
-                            Clasificacion(Tipos.PalabraReservada);
+                            Clasificacion = Tipos.PalabraReservada;
                             break;
                     }
                 }

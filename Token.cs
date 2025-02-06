@@ -24,16 +24,18 @@ namespace Semantica_1
             contenido = "";
             clasificacion = Tipos.Identificador;
         }
-        public string Clasificacion
+        public Tipos Clasificacion
+        {
+            get => clasificacion;
+            set => clasificacion = value;
+        }
+
+        public string Contenido
         {
             get => contenido;
             set => contenido = value;
         }
-        public string Contenido
-        {
-            get => Clasificacion;
-            set => Clasificacion = value;
-        }
+
 
     }
 }

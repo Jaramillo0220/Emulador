@@ -12,3 +12,4 @@ C:\Users\josea\OneDrive\Escritorio\Lenguajes y Automatas II\Semantica_1\obj\Debu
 C:\Users\josea\OneDrive\Escritorio\Lenguajes y Automatas II\Semantica_1\obj\Debug\net9.0\Semantica_1.pdb
 C:\Users\josea\OneDrive\Escritorio\Lenguajes y Automatas II\Semantica_1\obj\Debug\net9.0\Semantica_1.genruntimeconfig.cache
 C:\Users\josea\OneDrive\Escritorio\Lenguajes y Automatas II\Semantica_1\obj\Debug\net9.0\ref\Semantica_1.dll
+C:\Users\josea\OneDrive\Escritorio\Lenguajes y Automatas II\Semantica_1\obj\Debug\net9.0\Semantica_1.sourcelink.json

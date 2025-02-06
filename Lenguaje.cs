@@ -63,7 +63,7 @@ namespace Semantica_1
             {
                 Librerias();
             }
-            if (Clasificacion = Tipos.TipoDato)
+            if (Clasificacion == Tipos.TipoDato)
             {
                 Variables();
             }
@@ -95,7 +95,7 @@ namespace Semantica_1
             match(Tipos.TipoDato);
             ListaIdentificadores(t);
             match(";");
-            if (Clasificacion = Tipos.TipoDato)
+            if (Clasificacion == Tipos.TipoDato)
             {
                 Variables();
             }
@@ -213,7 +213,7 @@ namespace Semantica_1
             {
                 For();
             }
-            else if (Clasificacion = Tipos.TipoDato)
+            else if (Clasificacion == Tipos.TipoDato)
             {
                 Variables();
             }
@@ -431,7 +431,7 @@ namespace Semantica_1
             }
             match("(");
             string concatenaciones = "";
-            if (Clasificacion = Tipos.Cadena)
+            if (Clasificacion == Tipos.Cadena)
             {
                 concatenaciones = Contenido.Trim('"');
                 match(Tipos.Cadena);
@@ -459,7 +459,7 @@ namespace Semantica_1
         private string Concatenaciones()
         {
             string resultado = "";
-            if (Clasificacion = Tipos.Identificador)
+            if (Clasificacion == Tipos.Identificador)
             {
                 Variable? v = l.Find(variable => variable.getNombre() == Contenido);
                 if (v != null)
@@ -472,7 +472,7 @@ namespace Semantica_1
                 }
                 match(Tipos.Identificador);
             }
-            else if (Clasificacion = Tipos.Cadena)
+            else if (Clasificacion == Tipos.Cadena)
             {
                 resultado = Contenido.Trim('"');
                 match(Tipos.Cadena);
@@ -507,7 +507,7 @@ namespace Semantica_1
         //MasTermino -> (OperadorTermino Termino)?
         private void MasTermino()
         {
-            if (Clasificacion = Tipos.OperadorTermino)
+            if (Clasificacion == Tipos.OperadorTermino)
             {
                 string operador = Contenido;
                 match(Tipos.OperadorTermino);
@@ -531,7 +531,7 @@ namespace Semantica_1
         //PorFactor -> (OperadorFactor Factor)?
         private void PorFactor()
         {
-            if (Clasificacion = Tipos.OperadorFactor)
+            if (Clasificacion == Tipos.OperadorFactor)
             {
                 string operador = Contenido;
                 match(Tipos.OperadorFactor);
@@ -550,14 +550,14 @@ namespace Semantica_1
         //Factor -> numero | identificador | (Expresion)
         private void Factor()
         {
-            if (Clasificacion = Tipos.Numero)
+            if (Clasificacion == Tipos.Numero)
             {
                 Variable.valorToTipoDato(float.Parse(Contenido));
                 s.Push(float.Parse(Contenido));
                 //Console.Write(Contenido + " ");
                 match(Tipos.Numero);
             }
-            else if (Clasificacion = Tipos.Identificador)
+            else if (Clasificacion == Tipos.Identificador)
             {
                 Variable? v = l.Find(variable => variable.getNombre() == Contenido);
                 if (v == null)
