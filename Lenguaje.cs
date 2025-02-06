@@ -2,11 +2,11 @@
 
 REQUERIMIENTOS:
 
-1) En la clase token, implementar set y get [DONE]
+1) Implementar en la clase token set y get [LISTO]
 2) Implementar parámetros por default en el constructor léxico. Investigar cómo implementar un constructor 
     que haga lo mismo que los dos. Investigar parámetros por default
 3) Implementar línea y columna en los Errores Semánticos
-
+4) Implementar máximoTipo en la asignación, es decir, cuando se haga v.setValor(r)
 */
 
 using System;
@@ -52,7 +52,7 @@ namespace Semantica_1
             log.WriteLine("Lista de variables: ");
             foreach (Variable elemento in l)
             {
-                log.WriteLine($"{elemento.getNombre()} {elemento.GetTipoDato()} {elemento.getValor()}");
+                log.WriteLine($"{elemento.getNombre()} {elemento.getTipoDato()} {elemento.getValor()}");
             }
         }
 
@@ -261,7 +261,7 @@ namespace Semantica_1
                 match("=");
                 if (Contenido == "Console")
                 {
-                    ListaIdentificadores(v.GetTipoDato()); // Ya se hace este procedimiento arriba así que simplemente obtenemos a través del método lo que necesitamos
+                    ListaIdentificadores(v.getTipoDato()); // Ya se hace este procedimiento arriba así que simplemente obtenemos a través del método lo que necesitamos
                 }
                 else
                 {
@@ -552,7 +552,12 @@ namespace Semantica_1
         {
             if (Clasificacion == Tipos.Numero)
             {
-                Variable.valorToTipoDato(float.Parse(Contenido));
+                //Si el tipo de dato del número es mayor al tipo de dato actual, cambiarlo
+                if (maximoTipo < Variable.valorToTipoDato(float.Parse(Contenido)))
+                {
+                    maximoTipo = Variable.valorToTipoDato(float.Parse(Contenido));
+                }
+
                 s.Push(float.Parse(Contenido));
                 //Console.Write(Contenido + " ");
                 match(Tipos.Numero);
@@ -560,10 +565,17 @@ namespace Semantica_1
             else if (Clasificacion == Tipos.Identificador)
             {
                 Variable? v = l.Find(variable => variable.getNombre() == Contenido);
+
                 if (v == null)
                 {
-                    throw new Error("Sintaxis: la variable " + Contenido + " no está definida", log, linea, columna);
+                    throw new Error("Sintaxis: la variable " + Contenido + " no está definida ", log, linea, columna);
                 }
+
+                if (maximoTipo < v.getTipoDato())
+                {
+                    maximoTipo = v.getTipoDato();
+                }
+
                 s.Push(v.getValor());
                 //Console.Write(Contenido + " ");
                 match(Tipos.Identificador);
@@ -571,11 +583,30 @@ namespace Semantica_1
             else
             {
                 match("(");
+
+                Variable.TipoDato tipoCasteo = Variable.TipoDato.Char;
+                bool huboCasteo = false;
+                if (Clasificacion == Tipos.TipoDato)
+                {
+                    switch (Contenido)
+                    {
+                        case "int": tipoCasteo = Variable.TipoDato.Int; break;
+                        case "float": tipoCasteo = Variable.TipoDato.Float; break;
+                    }
+                    match(Tipos.TipoDato);
+                    match(")");
+                    match("(");
+                    huboCasteo = true;
+                }
+
                 Expresion();
+
+                if (huboCasteo)
+                {
+                    maximoTipo = tipoCasteo;
+                }
                 match(")");
             }
         }
-        /*SNT = Producciones = Invocar el metodo
-        ST  = Tokens (Contenido | Classification) = Invocar match    Variables -> tipo_dato Lista_identificadores; Variables?*/
     }
 }

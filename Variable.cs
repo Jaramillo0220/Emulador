@@ -59,7 +59,7 @@ namespace Semantica_1
         {
             return nombre;
         }
-        public TipoDato GetTipoDato()
+        public TipoDato getTipoDato()
         {
             return tipo;
         }

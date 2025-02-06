@@ -10,12 +10,24 @@ namespace Semantica_1
     {
         public enum Tipos
         {
-            Identificador, Numero, Caracter, FinSentencia,
-            InicioBloque, FinBloque, OperadorTernario,
-            OperadorTermino, OperadorFactor, IncrementoTermino,
-            IncrementoFactor, Puntero, Asignacion,
-            OperadorRelacional, OperadorLogico, Moneda,
-            Cadena, TipoDato, PalabraReservada
+            Identificador,
+            Numero,
+            Caracter,
+            FinSentencia,
+            InicioBloque,
+            FinBloque,
+            OperadorTernario,
+            OperadorTermino,
+            OperadorFactor,
+            IncrementoTermino,
+            IncrementoFactor,
+            Puntero, Asignacion,
+            OperadorRelacional,
+            OperadorLogico,
+            Moneda,
+            Cadena,
+            TipoDato,
+            PalabraReservada
         }
         private string contenido;
         private Tipos clasificacion;
