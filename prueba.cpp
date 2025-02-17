@@ -5,55 +5,39 @@ using System.Threading.Tasks;
 
 static void Main(string[] args)
 {
-  //char e = 256;
-  //int a = Console.ReadLine();
-  int a = 1;
-  float b = 1;
-  char c = (char) ((char) (a) + (float) (b));
+  //PRUEBAS CON CHAR
+  char a;
 
-  if(c != 5) {
-    Console.WriteLine("La suma es distinta de 5");
+  //char + int = int -> Error
+  a = 1;
+  int b = 2;
+  a = (char) (a + b); //Bien
 
-    if(a == 7) {
-      Console.WriteLine("La variable a es igual a 7");
-    } else {
-      Console.WriteLine("Else ejecutado");
-    }
-  } else {
-    Console.WriteLine("La suma de a + b = " + c);
-  }
-  /*int b = Console.ReadLine();
-  int a = (3 + 5) * 8 - (10 - 2*b) / b; // 61
-  a--;
-  a+=40;
-  a*=2;
-  a--;
-  a-=99;
+  //char + float = float -> Error
+  a = 1;
+  float c = 3;
+  a = (char) (a + c); //Bien
 
-  int n = 5;
+  //char + char = char -> Bien
+  a = 1;
+  char d = 4;
+  a = a + d;
 
-  for(b = 100; a < n; a++) {
-    b++;
-    while( b != 5 ) {
-      if(n == 5) {
-        Console.WriteLine("5 es igual a " + n + " " + a + " " + b );
-      } else {
-        Console.WriteLine("5 es diferente a " + n);
-      }
-    }
-  }
+  //PRUEBAS CON INT
+  int e = 256;
 
-  if(a % 2 != 0) {
-    Console.WriteLine("Es impar " + a);
-    if(b == 2) {
-      Console.WriteLine("b es igual a 2");
-    } else if( b > 3) {
-      Console.WriteLine("b es mayor a 3 y vale " + b);
-    }
-    else {
-      Console.WriteLine("b no es igual a 2 y vale " + b);
-    }
-  } else {
-    Console.WriteLine("Es impar");
-  }*/
+  //int + char = int -> Bien
+  char f = 2;
+  e = e + f; //Bien
+
+  //int + float = float -> Error
+  e = 256;
+  float g = 5;
+  e = (int) (e + g); // Bien
+
+  //int + int = int -> Bien
+  e = 256;
+  int h = 2;
+  e = e + h; //Bien
+  e = (char) (e + h); // Bien
 }

@@ -20,6 +20,18 @@ namespace Semantica_1
             this.nombre = nombre;
             this.valor = valor;
         }
+        public void setValor(float valor, TipoDato maximoTipo)
+        {
+            if (maximoTipo <= tipo)
+            {
+                this.valor = valor;
+            }
+            else
+            {
+                Console.WriteLine("Este se esta ejecutando");
+                throw new Error("Semántico: no se puede asignar un " + maximoTipo + " a un " + tipo + " en: [" + Lexico.linea + "," + Lexico.columna + "]");
+            }
+        }
         public void setValor(float valor)
         {
             if (valorToTipoDato(valor) <= tipo)
@@ -28,13 +40,14 @@ namespace Semantica_1
             }
             else
             {
-                throw new Error("Semántico: no se puede asignar un " + valorToTipoDato(valor) + " a un " + tipo);
+                throw new Error("Semántico: no se puede asignar un " + valorToTipoDato(valor) + " a un " + tipo + " en: [" + Lexico.linea + "," + Lexico.columna + "]");
             }
         }
 
+
         public static TipoDato valorToTipoDato(float valor)
         {
-            if (!float.IsInteger(valor))
+            if (Math.Floor(valor) != valor)
             {
                 return TipoDato.Float;
             }
@@ -51,6 +64,7 @@ namespace Semantica_1
                 return TipoDato.Float;
             }
         }
+
         public float getValor()
         {
             return valor;

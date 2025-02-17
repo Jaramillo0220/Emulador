@@ -17,10 +17,10 @@ namespace Semantica_1
         public StreamReader archivo;
         public StreamWriter log;
         public StreamWriter asm;
-        public int linea = 1;
+        public static int linea = 1;
+        public static int columna = 1;
         const int F = -1;
         const int E = -2;
-        public int columna = 1;
         readonly int[,] TRAND = {
                 {  0,  1,  2, 33,  1, 12, 14,  8,  9, 10, 11, 23, 16, 16, 18, 20, 21, 26, 25, 27, 29, 32, 34,  0,  F, 33  },
                 {  F,  1,  1,  F,  1,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F  },
@@ -61,24 +61,7 @@ namespace Semantica_1
                 { 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 37, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36  },
                 { 36, 36, 36, 36, 36, 36, 35, 36, 36, 36, 36, 36, 37, 36, 36, 36, 36, 36, 36, 36, 36, 36,  0, 36, 36, 36  }
             };
-
-        public Lexico()
-        {
-            log = new StreamWriter("prueba.log");
-            asm = new StreamWriter("prueba.asm");
-            log.AutoFlush = true;
-            asm.AutoFlush = true;
-            if (File.Exists("prueba.cpp"))
-            {
-                archivo = new StreamReader("prueba.cpp");
-            }
-            else
-            {
-                throw new Error("El archivo prueba.cpp no existe", log);
-            }
-        }
-
-        public Lexico(string nombreArchivo)
+        public Lexico(string nombreArchivo = "HolaMundo.cpp")
         {
 
             string nombreArchivoWithoutExt = Path.GetFileNameWithoutExtension(nombreArchivo);   /* Obtenemos el nombre del archivo sin la extensión para poder crear el .log y .asm */

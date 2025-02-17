@@ -3,10 +3,11 @@
 REQUERIMIENTOS:
 
 1) Implementar en la clase token set y get [LISTO]
-2) Implementar parámetros por default en el constructor léxico. Investigar cómo implementar un constructor 
-    que haga lo mismo que los dos. Investigar parámetros por default
-3) Implementar línea y columna en los Errores Semánticos
+2) Implementar parámetros por default en el constructor léxico. Investigar cómo implementar 
+   un constructor que haga lo mismo que los dos. Investigar parámetros por default [LISTO]
+3) Implementar línea y columna en los Errores Semánticos [LISTO]
 4) Implementar máximoTipo en la asignación, es decir, cuando se haga v.setValor(r)
+5) Implementar el casteo en el stack
 */
 
 using System;
@@ -147,6 +148,7 @@ namespace Semantica_1
                         }
                     }
                     match("(");
+                    Asignacion();
                     match(")");
                 }
                 else
@@ -234,8 +236,6 @@ namespace Semantica_1
         */
         private void Asignacion()
         {
-            // Cada vez que haya una asignación reiniciar e maxico tipo
-            maximoTipo = Variable.TipoDato.Char;
             float r;
             Variable? v = l.Find(variable => variable.getNombre() == Contenido);
             if (v == null)
@@ -267,7 +267,7 @@ namespace Semantica_1
                 {
                     Expresion();
                     r = s.Pop();
-                    v.setValor(r);
+                    v.setValor(r, maximoTipo);
                 }
             }
             else if (Contenido == "+=")
@@ -548,18 +548,18 @@ namespace Semantica_1
             }
         }
         //Factor -> numero | identificador | (Expresion)
+        // Modificar el método Factor para soportar el casteo explícito
         private void Factor()
         {
             if (Clasificacion == Tipos.Numero)
             {
-                //Si el tipo de dato del número es mayor al tipo de dato actual, cambiarlo
+                // Si el tipo de dato del número es mayor al tipo de dato actual, cambiarlo
                 if (maximoTipo < Variable.valorToTipoDato(float.Parse(Contenido)))
                 {
                     maximoTipo = Variable.valorToTipoDato(float.Parse(Contenido));
                 }
 
                 s.Push(float.Parse(Contenido));
-                //Console.Write(Contenido + " ");
                 match(Tipos.Numero);
             }
             else if (Clasificacion == Tipos.Identificador)
@@ -577,7 +577,6 @@ namespace Semantica_1
                 }
 
                 s.Push(v.getValor());
-                //Console.Write(Contenido + " ");
                 match(Tipos.Identificador);
             }
             else
@@ -586,6 +585,8 @@ namespace Semantica_1
 
                 Variable.TipoDato tipoCasteo = Variable.TipoDato.Char;
                 bool huboCasteo = false;
+
+                // Verificar si hay un tipo de dato explícito (casteo)
                 if (Clasificacion == Tipos.TipoDato)
                 {
                     switch (Contenido)
@@ -603,10 +604,24 @@ namespace Semantica_1
 
                 if (huboCasteo)
                 {
-                    maximoTipo = tipoCasteo;
+                    // Realizar el casteo del valor en el stack al tipo indicado
+                    float valor = s.Pop(); // Obtener el valor actual de la pila
+                    switch (tipoCasteo)
+                    {
+                        case Variable.TipoDato.Int:
+                            float valorEntero = valor - (valor % 1);
+                            valor = valorEntero;
+                            break;
+                        case Variable.TipoDato.Float:
+                            //valor = (float)valor;  Ya es float, no cambia
+                            break;
+                    }
+                    s.Push(valor); // Regresar el valor casteado al stack
+                    maximoTipo = tipoCasteo; // Actualizar el tipo máximo
                 }
                 match(")");
             }
         }
+
     }
 }
