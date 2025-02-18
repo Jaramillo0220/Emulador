@@ -61,10 +61,16 @@ namespace Semantica_1
                 { 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 37, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36  },
                 { 36, 36, 36, 36, 36, 36, 35, 36, 36, 36, 36, 36, 37, 36, 36, 36, 36, 36, 36, 36, 36, 36,  0, 36, 36, 36  }
             };
-        public Lexico(string nombreArchivo = "HolaMundo.cpp")
+        public Lexico(string nombreArchivo = "prueba.cpp")
         {
 
             string nombreArchivoWithoutExt = Path.GetFileNameWithoutExtension(nombreArchivo);   /* Obtenemos el nombre del archivo sin la extensión para poder crear el .log y .asm */
+
+            if (Path.GetExtension(nombreArchivo) != ".cpp")
+            {
+                throw new ArgumentException("El archivo debe ser de extensión .cpp");
+            }
+
             if (File.Exists(nombreArchivo))
             {
                 log = new StreamWriter(nombreArchivoWithoutExt + ".log");
@@ -77,13 +83,10 @@ namespace Semantica_1
                 log.WriteLine("Fecha y hora: " + ahora.ToString());
                 log.WriteLine("----------------------------------");
             }
-            else if (Path.GetExtension(nombreArchivo) != ".cpp")
-            {
-                throw new ArgumentException("El archivo debe ser de extensión .cpp");
-            }
             else
             {
-                throw new FileNotFoundException("La extensión " + Path.GetExtension(nombreArchivo) + " no existe");    /* Defino una excepción que indica que existe un error con el archivo en caso de no ser encontrado */
+                throw new FileNotFoundException("El archivo " + Path.GetExtension(nombreArchivo) + " no existe");    /* Defino una excepción que indica que existe un error con el archivo en caso de no ser encontrado */
+
             }
         }
         public void Dispose()
