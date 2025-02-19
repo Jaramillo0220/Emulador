@@ -664,14 +664,11 @@ namespace Semantica_1
                         case Variable.TipoDato.Int:
                             /*float valorEntero = valor - (valor % 1); // valor total - parte decimal
                             valor = valorEntero;*/
-                            valor = valor % 65536; //  2^16
-                            break;
-                        case Variable.TipoDato.Float:
-                            // Ya es float, no cambia
+                            valor %= 65536; //  2^16
                             break;
                         case Variable.TipoDato.Char:
                             // Convertir a char
-                            valor = valor % 256;
+                            valor %= 256;
                             break;
                     }
                     s.Push(valor); // Regresar el valor casteado al stack
