@@ -463,6 +463,7 @@ namespace Emulador
                     linea = lineaTMP;
                     nextToken();
                 }
+
             } while (ejecutaDo);
         }
         /*For -> for(Asignacion; Condicion; Asignacion) 
