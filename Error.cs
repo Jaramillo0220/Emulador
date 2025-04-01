@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace Semantica_1
+namespace Emulador
 {
     public class Error : Exception
     {
@@ -15,7 +15,7 @@ namespace Semantica_1
         }
         public Error(string message, StreamWriter log, int linea, int columna) : base(message + "en la linea [" + linea + "] en la columna [" + columna + "]")
         {
-            log.WriteLine("Error: " + message + "en la linea [" + linea + "] en la columna [" + columna + "]");
+            log.WriteLine("Error: " + message + " en la linea [" + linea + "] en la columna [" + columna + "]");
         }
     }
 }

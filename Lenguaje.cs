@@ -24,12 +24,20 @@ NUEVOS REQUERIMIENTOS AUTOMATAS I:
 
 
 
-    **********************REQUERIMIENTOS AUTOMATAS II:*******************************
+    ***********************REQUERIMIENTOS AUTOMATAS II:********************************
     1) Implementar set y get para la clase token (listo)
     2) Implementar parametros por default en el constructor del archivo lexico (listo)
     3) Implementar linea y columna en los errores semanticos[Listo]
     4) Implementar maxTipo en la asignacion, es decir, cuando se haga v.setValor(r)
     5) Implementar el casteo en el stack
+
+    -------------------------REQUERIMIENTOS TERCER PARCIAL----------------------------
+    1) Exception en console.read()
+    2) La segunda asignacion del for(incremento) debe de ejecutarse despues del bloque de instrucciones e instruccion
+    3) Programar el metod funcionMatematica()
+    4) Programar el for
+    5) Programar el while
+    ---------------------------------------------------------------------------------
     ***********************************************************************************
 */
 
@@ -40,7 +48,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Semantica_1
+namespace Emulador
 {
     public class Lenguaje : Sintaxis
     {
@@ -229,15 +237,15 @@ namespace Semantica_1
             }
             else if (Contenido == "while")
             {
-                While();
+                While(ejecuta);
             }
             else if (Contenido == "do")
             {
-                Do();
+                Do(ejecuta);
             }
             else if (Contenido == "for")
             {
-                For();
+                For(ejecuta);
             }
             else if (Clasificacion == Tipos.TipoDato)
             {
@@ -407,59 +415,75 @@ namespace Semantica_1
             }
         }
         //While -> while(Condicion) bloqueInstrucciones | instruccion
-        private void While()
+        private void While(bool ejecuta)
         {
             match("while");
             match("(");
-            Condicion();
+            bool ejecutaWhile = Condicion() && ejecuta;
             match(")");
             if (Contenido == "{")
             {
-                BloqueInstrucciones(true);
+                BloqueInstrucciones(ejecutaWhile);
             }
             else
             {
-                Instruccion(true);
+                Instruccion(ejecutaWhile);
             }
         }
         /*Do -> do bloqueInstrucciones | intruccion 
         while(Condicion);*/
-        private void Do()
+        private void Do(bool ejecuta)
         {
-            match("do");
-            if (Contenido == "{")
+            //match("do");
+            int charTMP = charCount - 3; // Se resta 3 porque se lee el do
+            int lineaTMP = linea;
+            bool ejecutaDo;
+            do
             {
-                BloqueInstrucciones(true);
-            }
-            else
-            {
-                Instruccion(true);
-            }
-            match("while");
-            match("(");
-            Condicion();
-            match(")");
-            match(";");
+                match("do");
+                if (Contenido == "{")
+                {
+                    BloqueInstrucciones(ejecuta);
+                }
+                else
+                {
+                    Instruccion(ejecuta);
+                }
+                match("while");
+                match("(");
+                ejecutaDo = Condicion() && ejecuta;
+                match(")");
+                match(";");
+                if (ejecuta)
+                {
+                    //Seek
+                    archivo.DiscardBufferedData();
+                    archivo.BaseStream.Seek(charTMP, SeekOrigin.Begin);
+                    charCount = charTMP;
+                    linea = lineaTMP;
+                    nextToken();
+                }
+            } while (ejecutaDo);
         }
         /*For -> for(Asignacion; Condicion; Asignacion) 
         BloqueInstrucciones | Intruccion*/
-        private void For()
+        private void For(bool ejecuta)
         {
             match("for");
             match("(");
             Asignacion();
             match(";");
-            Condicion();
+            bool ejecutaFor = Condicion() && ejecuta;
             match(";");
             Asignacion();
             match(")");
             if (Contenido == "{")
             {
-                BloqueInstrucciones(true);
+                BloqueInstrucciones(ejecutaFor);
             }
             else
             {
-                Instruccion(true);
+                Instruccion(ejecutaFor);
             }
         }
         //Console -> Console.(WriteLine|Write) (cadena? concatenaciones?);
@@ -487,6 +511,19 @@ namespace Semantica_1
             {
                 concatenaciones = Contenido.Trim('"');
                 match(Tipos.Cadena);
+            }
+            else
+            {
+                Variable? v = l.Find(var => var.getNombre() == Contenido);
+                if (v == null)
+                {
+                    throw new Error("Sintaxis: La variable " + Contenido + " no está definida", log, linea, columna);
+                }
+                else
+                {
+                    concatenaciones = v.getValor().ToString();
+                    match(Tipos.Identificador);
+                }
             }
 
             if (Contenido == "+")
@@ -633,6 +670,17 @@ namespace Semantica_1
                 s.Push(v.getValor());
                 match(Tipos.Identificador);
             }
+            else if (Clasificacion == Tipos.FuncionMatematica)
+            {
+                string nombreFuncion = Contenido;
+                match(Tipos.FuncionMatematica);
+                match("(");
+                Expresion();
+                match(")");
+                float resultado = s.Pop();
+                float mathResult = funcionMatematica(resultado, nombreFuncion);
+                s.Push(mathResult);
+            }
             else
             {
                 match("(");
@@ -658,16 +706,13 @@ namespace Semantica_1
 
                 if (huboCasteo)
                 {
-                    float valor = s.Pop(); // Obtener el valor actual de la pila
+                    float valor = s.Pop(); // Obtener el valor actual del stack
                     switch (tipoCasteo)
                     {
                         case Variable.TipoDato.Int:
-                            /*float valorEntero = valor - (valor % 1); // valor total - parte decimal
-                            valor = valorEntero;*/
                             valor %= 65536; //  2^16
                             break;
                         case Variable.TipoDato.Char:
-                            // Convertir a char
                             valor %= 256;
                             break;
                     }
@@ -677,5 +722,23 @@ namespace Semantica_1
                 match(")");
             }
         }
+        float resultado;
+        private float funcionMatematica(float valor, string nombre)
+        {
+
+            {
+                switch (nombre)
+                {
+                    case "abs": resultado = Math.Abs(valor); break;
+                    case "pow": resultado = (float)Math.Pow(valor, 2); break;
+                    case "sqrt": resultado = (float)Math.Sqrt(valor); break;
+                }
+
+                return resultado;
+            }
+        }
+
+
+
     }
 }

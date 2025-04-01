@@ -10,7 +10,7 @@ using System.Data.Common;
 using System.IO.Compression;
 using Microsoft.VisualBasic;
 
-namespace Semantica_1
+namespace Emulador
 {
     public class Lexico : Token, IDisposable
     {
@@ -18,9 +18,10 @@ namespace Semantica_1
         public StreamWriter log;
         public StreamWriter asm;
         public static int linea = 1;
-        public static int columna = 1;
         const int F = -1;
         const int E = -2;
+        public static int columna = 1;
+        protected int charCount;
         readonly int[,] TRAND = {
                 {  0,  1,  2, 33,  1, 12, 14,  8,  9, 10, 11, 23, 16, 16, 18, 20, 21, 26, 25, 27, 29, 32, 34,  0,  F, 33  },
                 {  F,  1,  1,  F,  1,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F  },
@@ -61,8 +62,25 @@ namespace Semantica_1
                 { 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 37, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36  },
                 { 36, 36, 36, 36, 36, 36, 35, 36, 36, 36, 36, 36, 37, 36, 36, 36, 36, 36, 36, 36, 36, 36,  0, 36, 36, 36  }
             };
+        /*public Lexico()
+        {
+            log = new StreamWriter("prueba.log");
+            asm = new StreamWriter("prueba.asm");
+            log.AutoFlush = true;
+            asm.AutoFlush = true;
+            if (File.Exists("prueba.cpp"))
+            {
+                archivo = new StreamReader("prueba.cpp");
+            }
+            else
+            {
+                throw new Error("El archivo prueba.cpp no existe", log);
+            }
+        }*/
+
         public Lexico(string nombreArchivo = "prueba.cpp")
         {
+            charCount = 1;
 
             string nombreArchivoWithoutExt = Path.GetFileNameWithoutExtension(nombreArchivo);   /* Obtenemos el nombre del archivo sin la extensión para poder crear el .log y .asm */
             log = new StreamWriter(nombreArchivoWithoutExt + ".log");
@@ -86,7 +104,6 @@ namespace Semantica_1
             else
             {
                 throw new Error("El archivo " + Path.GetExtension(nombreArchivo) + " no existe", log);
-
             }
         }
         public void Dispose()
@@ -253,6 +270,7 @@ namespace Semantica_1
                 if (estado >= 0)
                 {
                     archivo.Read();
+                    charCount++;
                     if (c == '\n')
                     {
                         linea++;
@@ -291,6 +309,7 @@ namespace Semantica_1
                     throw new Error("léxico, se espera fin de comentario", log, linea, columna);
                 }
             }
+            //setContenido(buffer);
             Contenido = buffer;
             if (!finArchivo())
             {
@@ -309,6 +328,22 @@ namespace Semantica_1
                         case "while":
                         case "for":
                             Clasificacion = Tipos.PalabraReservada;
+                            break;
+                        case "abs":
+                        case "ceil":
+                        case "pow":
+                        case "sqrt":
+                        case "exp":
+                        case "equal":
+                        case "floor":
+                        case "max":
+                        case "min":
+                        case "log10":
+                        case "log2":
+                        case "random":
+                        case "trunc":
+                        case "round":
+                            Clasificacion = Tipos.FuncionMatematica;
                             break;
                     }
                 }

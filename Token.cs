@@ -4,7 +4,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Semantica_1
+namespace Emulador
 {
     public class Token
     {
@@ -27,7 +27,8 @@ namespace Semantica_1
             Moneda,
             Cadena,
             TipoDato,
-            PalabraReservada
+            PalabraReservada,
+            FuncionMatematica
         }
         private string contenido;
         private Tipos clasificacion;

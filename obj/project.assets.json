@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\josea\\OneDrive\\Documentos\\Materias 5to semestre\\Lenguajes y Automatas II\\Semantica_1\\Semantica_1.csproj",
-      "projectName": "Semantica_1",
-      "projectPath": "C:\\Users\\josea\\OneDrive\\Documentos\\Materias 5to semestre\\Lenguajes y Automatas II\\Semantica_1\\Semantica_1.csproj",
+      "projectUniqueName": "C:\\Users\\josea\\OneDrive\\Documentos\\Materias 5to semestre\\Lenguajes y Automatas II\\Emulador\\Emulador.csproj",
+      "projectName": "Emulador",
+      "projectPath": "C:\\Users\\josea\\OneDrive\\Documentos\\Materias 5to semestre\\Lenguajes y Automatas II\\Emulador\\Emulador.csproj",
       "packagesPath": "C:\\Users\\josea\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\josea\\OneDrive\\Documentos\\Materias 5to semestre\\Lenguajes y Automatas II\\Semantica_1\\obj\\",
+      "outputPath": "C:\\Users\\josea\\OneDrive\\Documentos\\Materias 5to semestre\\Lenguajes y Automatas II\\Emulador\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\josea\\AppData\\Roaming\\NuGet\\NuGet.Config"
