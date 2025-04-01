@@ -607,7 +607,9 @@ namespace Emulador
                 //Console.Write(operador + " ");
                 float n1 = s.Pop();
                 float n2 = s.Pop();
+
                 switch (operador)
+
                 {
                     case "+": s.Push(n2 + n1); break;
                     case "-": s.Push(n2 - n1); break;
