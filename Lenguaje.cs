@@ -1,42 +1,11 @@
 /*
-REQUERIMIENTOS AUTOMATAS I:
-    1) Indicar en el error Léxico o sintáctico, el número de línea y caracter [DONE]
-    2) En el log colocar el nombre del archivo a compilar, la fecha y la hora [DONE]
-    3)  Agregar el resto de asignaciones [DONE]
-            Asignacion -> 
-            Id = Expresion
-            Id++
-            Id--
-            Id IncrementoTermino Expresion
-            Id IncrementoFactor Expresion
-            Id = Console.Read()
-            Id = Console.ReadLine()
-    4) Emular el Console.Write() & Console.WriteLine() [DONE] 
-    5) Emular el Console.Read() & Console.ReadLine() [DONE]
-
-NUEVOS REQUERIMIENTOS AUTOMATAS I:
-    1) Concatenación [DONE]
-    2) Inicializar una variable desde la declaración [DONE]
-    3) Evaluar las expresiones matemáticas [DONE]
-    4) Levantar una excepción si en el Console.(Read | ReadLine) no ingresan números [DONE]
-    5) Modificar la variable con el resto de operadores (Incremento de factor y termino) [DONE]
-    6) Implementar el else [DONE]
-
-
-
-    ***********************REQUERIMIENTOS AUTOMATAS II:********************************
-    1) Implementar set y get para la clase token (listo)
-    2) Implementar parametros por default en el constructor del archivo lexico (listo)
-    3) Implementar linea y columna en los errores semanticos[Listo]
-    4) Implementar maxTipo en la asignacion, es decir, cuando se haga v.setValor(r)
-    5) Implementar el casteo en el stack
-
     -------------------------REQUERIMIENTOS TERCER PARCIAL----------------------------
-    1) Exception en console.read()
-    2) La segunda asignacion del for(incremento) debe de ejecutarse despues del bloque de instrucciones e instruccion
-    3) Programar el metod funcionMatematica()
-    4) Programar el for
-    5) Programar el while
+    1) Exception en console.read() [DONE]
+    2) La segunda asignacion del for(incremento) debe de 
+    ejecutarse despues del bloque de instrucciones e instruccion []
+    3) Programar el metodo funcionMatematica() [DONE]
+    4) Programar el for []
+    5) Programar el while []
     ---------------------------------------------------------------------------------
     ***********************************************************************************
 */
@@ -302,7 +271,16 @@ namespace Emulador
                     {
                         match("Read");
                         match("(");
-                        Console.Read();
+                        r = Console.Read();
+                        if (r >= 48 || r <= 57)
+                        {
+                            v?.setValor(r);
+                        }
+                        else
+                        {
+                            throw new Error("Entrada invalida: Solo se permiten numeros del 0 al 9.", log, linea, columna);
+                        }
+
                     }
                     else
                     {
@@ -311,7 +289,7 @@ namespace Emulador
                         string? lineaLeida = Console.ReadLine();
                         if (!float.TryParse(lineaLeida, out float numero))
                         {
-                            throw new Error("Entrada invalida: Solo se permiten numeros enteros.");
+                            throw new Error("Entrada invalida: Solo se permiten numeros enteros.", log, linea, columna);
                         }
                         s.Push(numero);
                         v?.setValor(numero, maxTipo);
@@ -454,7 +432,7 @@ namespace Emulador
                 ejecutaDo = Condicion() && ejecuta;
                 match(")");
                 match(";");
-                if (ejecuta)
+                if (ejecutaDo)
                 {
                     //Seek
                     archivo.DiscardBufferedData();
@@ -681,7 +659,7 @@ namespace Emulador
                 Expresion();
                 match(")");
                 float resultado = s.Pop();
-                float mathResult = funcionMatematica(resultado, nombreFuncion);
+                float mathResult = funcionMatematica(nombreFuncion, resultado, 0);
                 s.Push(mathResult);
             }
             else
@@ -726,20 +704,31 @@ namespace Emulador
             }
         }
         float resultado;
-        private float funcionMatematica(float valor, string nombre)
+        public float funcionMatematica(string nombre, float valor, float valor2 = 0)
         {
+            float resultado = 0;
 
+            switch (nombre)
             {
-                switch (nombre)
-                {
-                    case "abs": resultado = Math.Abs(valor); break;
-                    case "pow": resultado = (float)Math.Pow(valor, 2); break;
-                    case "sqrt": resultado = (float)Math.Sqrt(valor); break;
-                }
-
-                return resultado;
+                case "abs": resultado = Math.Abs(valor); break;
+                case "ceiling": resultado = (float)Math.Ceiling(valor); break;
+                case "pow": resultado = (float)Math.Pow(valor, 2); break;
+                case "sqrt": resultado = (float)Math.Sqrt(valor); break;
+                case "exp": resultado = (float)Math.Exp(valor); break;
+                case "equals": resultado = (valor == valor2) ? 1 : 0; break;
+                case "floor": resultado = (float)Math.Floor(valor); break;
+                case "max": resultado = Math.Max(valor, valor2); break;
+                case "min": resultado = Math.Min(valor, valor2); break;
+                case "log10": resultado = (float)Math.Log10(valor); break;
+                case "log2": resultado = (float)Math.Log2(valor); break;
+                case "random": resultado = (float)new Random().NextDouble(); break;
+                case "trunc": resultado = (float)Math.Truncate(valor); break;
+                case "round": resultado = (float)Math.Round(valor); break;
             }
+
+            return resultado;
         }
+
 
 
 
