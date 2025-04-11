@@ -5,7 +5,7 @@
     ejecutarse despues del bloque de instrucciones e instruccion []
     3) Programar el metodo funcionMatematica() [DONE]
     4) Programar el for []
-    5) Programar el while []
+    5) Programar el while [DONE]
     ---------------------------------------------------------------------------------
     ***********************************************************************************
 */
@@ -134,7 +134,8 @@ namespace Emulador
                     {
                         match("Read");
                         int r = Console.Read();
-                        v.setValor(r); // Asignamos el último valor leído a la última variable detectada
+                        v.setValor(r);
+                        // Asignamos el último valor leído a la última variable detectada
                     }
                     else
                     {
@@ -241,13 +242,28 @@ namespace Emulador
         {
             maxTipo = Variable.TipoDato.Char;
             float r;
+            // Mensaje de depuración para ver qué contiene "Contenido"
+            //Console.WriteLine($"Buscando variable: {Contenido} en la lista de variables");
+
+            // Imprimir todas las variables definidas en l
+            //foreach (var variable in l)
+            //{
+            //  Console.WriteLine($"Variable definida: {variable.getNombre()}");
+            //}
+
+            // Buscar la variable en la lista
             Variable? v = l.Find(variable => variable.getNombre() == Contenido);
+
+            // Si no encuentra la variable, lanza el error
             if (v == null)
             {
                 throw new Error("Sintaxis: La variable " + Contenido + " no está definida", log, linea, columna);
             }
-            //Console.Write(getContenido() + " = ");
+
             match(Tipos.Identificador);
+
+            // Depuración adicional para ver qué token se está procesando
+            //Console.WriteLine($"Contenido después de match(Tipos.Identificador): {Contenido}");
             if (Contenido == "++")
             {
                 match("++");
@@ -272,7 +288,8 @@ namespace Emulador
                         match("Read");
                         match("(");
                         r = Console.Read();
-                        if (r >= 48 || r <= 57)
+                        Console.ReadLine();
+                        if (r >= 48 && r <= 57)
                         {
                             v?.setValor(r);
                         }
@@ -280,12 +297,13 @@ namespace Emulador
                         {
                             throw new Error("Entrada invalida: Solo se permiten numeros del 0 al 9.", log, linea, columna);
                         }
-
                     }
                     else
                     {
                         match("ReadLine");
                         match("(");
+
+
                         string? lineaLeida = Console.ReadLine();
                         if (!float.TryParse(lineaLeida, out float numero))
                         {
@@ -395,18 +413,34 @@ namespace Emulador
         //While -> while(Condicion) bloqueInstrucciones | instruccion
         private void While(bool ejecuta)
         {
-            match("while");
-            match("(");
-            bool ejecutaWhile = Condicion() && ejecuta;
-            match(")");
-            if (Contenido == "{")
+            int charTMP = charCount - 6; // Se resta 6 porque se lee el while
+            int lineaTMP = linea;
+            bool ejecutaWhile;
+
+            do
             {
-                BloqueInstrucciones(ejecutaWhile);
-            }
-            else
-            {
-                Instruccion(ejecutaWhile);
-            }
+                archivo.DiscardBufferedData();
+                archivo.BaseStream.Seek(charTMP, SeekOrigin.Begin);
+                charCount = charTMP;
+                linea = lineaTMP;
+                nextToken();
+
+                match("while");
+                match("(");
+
+                ejecutaWhile = Condicion() && ejecuta;
+
+                match(")");
+
+                if (Contenido == "{")
+                {
+                    BloqueInstrucciones(ejecutaWhile);
+                }
+                else
+                {
+                    Instruccion(ejecutaWhile);
+                }
+            } while (ejecutaWhile);
         }
         /*Do -> do bloqueInstrucciones | intruccion 
         while(Condicion);*/
@@ -446,7 +480,7 @@ namespace Emulador
         }
         /*For -> for(Asignacion; Condicion; Asignacion) 
         BloqueInstrucciones | Intruccion*/
-        private void For(bool ejecuta)
+        /*private void For(bool ejecuta)
         {
             match("for");
             match("(");
@@ -463,6 +497,109 @@ namespace Emulador
             else
             {
                 Instruccion(ejecutaFor);
+            }
+        }*/
+        // En tu clase Lenguaje.cs o donde tengas implementado tu método For:
+        private void For(bool ejecuta)
+        {
+            // Guardar posición inicial
+            int initialChar = charCount - 4;
+            int initialLine = linea;
+
+            match("for");
+            match("(");
+            Asignacion(); // Ejecuta la inicialización
+            match(";");
+
+            // Guardar posición de la condición
+            int condChar = charCount - 2;
+            int condLine = linea;
+
+            // Evaluar condición inicial (usando ejecuta)
+            bool condition = Condicion() && ejecuta;
+            match(";");
+
+            // Guardar posición del incremento (sin ejecutarlo aún)
+            int incrChar = charCount - 2;
+            int incrLine = linea;
+
+            while (Contenido != ")")
+            {
+                nextToken();
+            }
+            match(")"); // Avanza al ")" sin procesar el incremento
+
+            // Guardar posición del bloque
+            int blockChar = charCount - 2;
+            int blockLine = linea;
+
+            if (condition)
+            {
+                // Primera iteración del bloque
+                archivo.DiscardBufferedData();
+                archivo.BaseStream.Seek(blockChar, SeekOrigin.Begin);
+                charCount = blockChar;
+                linea = blockLine;
+                nextToken();
+                if (Contenido == "{") BloqueInstrucciones(true);
+                else Instruccion(true);
+
+                while (condition)
+                {
+                    // Ejecutar el incremento después del bloque
+                    archivo.DiscardBufferedData();
+                    archivo.BaseStream.Seek(incrChar, SeekOrigin.Begin);
+                    charCount = incrChar;
+                    linea = incrLine;
+                    nextToken();
+                    Asignacion();
+                    match(")");
+
+                    // Re-evaluar condición
+                    archivo.DiscardBufferedData();
+                    archivo.BaseStream.Seek(condChar, SeekOrigin.Begin);
+                    charCount = condChar;
+                    linea = condLine;
+                    nextToken();
+                    condition = Condicion() && ejecuta;
+                    match(";");
+
+                    // Ejecutar el bloque si la condición es verdadera
+                    if (condition)
+                    {
+                        archivo.DiscardBufferedData();
+                        archivo.BaseStream.Seek(blockChar, SeekOrigin.Begin);
+                        charCount = blockChar;
+                        linea = blockLine;
+                        nextToken();
+                        if (Contenido == "{")
+                        {
+                            BloqueInstrucciones(true);
+                        }
+                        else
+                        {
+                            Instruccion(true);
+                        }
+                    }
+                }
+            }
+
+            // Si la condición inicial es falsa, analizar sintaxis sin ejecutar
+            if (!condition)
+            {
+                archivo.DiscardBufferedData();
+                archivo.BaseStream.Seek(blockChar, SeekOrigin.Begin);
+                charCount = blockChar;
+                linea = blockLine;
+                nextToken();
+                if (Contenido == "{")
+                {
+                    BloqueInstrucciones(false);
+                }
+                else
+                {
+                    Instruccion(false);
+                }
             }
         }
         //Console -> Console.(WriteLine|Write) (cadena? concatenaciones?);
@@ -721,7 +858,7 @@ namespace Emulador
                 case "min": resultado = Math.Min(valor, valor2); break;
                 case "log10": resultado = (float)Math.Log10(valor); break;
                 case "log2": resultado = (float)Math.Log2(valor); break;
-                case "random": resultado = (float)new Random().NextDouble(); break;
+                case "rand": resultado = (float)new Random().NextDouble(); break;
                 case "trunc": resultado = (float)Math.Truncate(valor); break;
                 case "round": resultado = (float)Math.Round(valor); break;
             }

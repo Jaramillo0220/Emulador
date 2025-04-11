@@ -1,7 +1,5 @@
 Archivo: prueba.cpp
-Fecha y hora: 4/1/2025 11:12:03 AM
+Fecha y hora: 4/11/2025 10:26:53 AM
 ----------------------------------
 Constructor lenguaje
-Lista de variables: 
-i Int 1
-n Int 5
+Error: Sintaxis: La variable cs no está definida en la linea [104] en la columna [18]
